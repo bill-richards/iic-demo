@@ -1,4 +1,4 @@
-#define SLAVE
+//#define SLAVE
 #define ALTERNATE_SLAVE
 
 #include <Arduino.h>
@@ -107,18 +107,13 @@ void Message_Task(void * pvParameters)
   const int messageBufferLength = 2001;
   char message[messageBufferLength];
 
-  char currentCharacter;
   xLastWakeTime = xTaskGetTickCount();
   while(true)
   {
     int index = 0;
     memset(&message, 0x00, messageBufferLength);
     
-    while(xQueueReceive(xMessageQueue, &currentCharacter, 0) == pdPASS)
-    {
-      message[index] = currentCharacter;
-      ++index;
-    }
+    while(xQueueReceive(xMessageQueue, &message[index], 0) == pdPASS) { ++index; }
     if(strlen(message) > 0) { Serial.println(message); }
 
     vTaskDelayUntil(&xLastWakeTime, xSleepPeriod);
